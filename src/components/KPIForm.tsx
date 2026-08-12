@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { X, Plus, Trash2 } from 'lucide-react'
-import type { KPIEntry, Member, CustomMetric } from '../types'
+import type { KPIEntry, Member } from '../types'
 
 interface KPIFormProps {
   members: Member[]
