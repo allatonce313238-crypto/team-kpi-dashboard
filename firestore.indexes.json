@@ -1,0 +1,13 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "kpi_entries",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "memberId", "order": "ASCENDING" },
+        { "fieldPath": "period", "order": "DESCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}
