@@ -53,17 +53,21 @@ def canvas(im, W, H):
     c.paste(im, ((W-im.width)//2, (H-im.height)//2))
     return c
 
-src, outdir = sys.argv[1], sys.argv[2]
-files = sys.argv[3:]
-os.makedirs(outdir, exist_ok=True)
-for idx,f in enumerate(files,1):
-    full, nbg, n = cut(f)
-    full.save(os.path.join(outdir, 'full_%02d.png'%idx))
-    st = fit(full, 370, 320, 10)
-    W = st.width + 20 + (st.width % 2); H = st.height + 20 + (st.height % 2)
-    W, H = min(W,370), min(H,320)
-    canvas(st, W, H).save(os.path.join(outdir, '%02d.png'%idx), optimize=True)
-    if idx == int(src):
-        canvas(fit(full,240,240,6),240,240).save(os.path.join(outdir,'main.png'), optimize=True)
-        canvas(fit(full,96,74,2),96,74).save(os.path.join(outdir,'tab.png'), optimize=True)
-    print(idx, os.path.basename(f), (W,H), 'components', n)
+def main():
+  src, outdir = sys.argv[1], sys.argv[2]
+  files = sys.argv[3:]
+  os.makedirs(outdir, exist_ok=True)
+  for idx,f in enumerate(files,1):
+      full, nbg, n = cut(f)
+      full.save(os.path.join(outdir, 'full_%02d.png'%idx))
+      st = fit(full, 370, 320, 10)
+      W = st.width + 20 + (st.width % 2); H = st.height + 20 + (st.height % 2)
+      W, H = min(W,370), min(H,320)
+      canvas(st, W, H).save(os.path.join(outdir, '%02d.png'%idx), optimize=True)
+      if idx == int(src):
+          canvas(fit(full,240,240,6),240,240).save(os.path.join(outdir,'main.png'), optimize=True)
+          canvas(fit(full,96,74,2),96,74).save(os.path.join(outdir,'tab.png'), optimize=True)
+      print(idx, os.path.basename(f), (W,H), 'components', n)
+
+if __name__=='__main__':
+    main()
