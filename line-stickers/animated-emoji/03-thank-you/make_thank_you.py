@@ -3,7 +3,7 @@ starting on the bow so LINE's still image shows it. No overlays."""
 import sys, os
 from PIL import Image
 SRC, OUT = sys.argv[1], sys.argv[2]            # folder of green-removed video frames (NNN.png), output folder
-W, LOOP_MS, N = 540, 2000, 20                   # working canvas (3x of 180), one loop, frames
+W, LOOP_MS, N = 540, 1000, 20                   # working canvas (3x of 180), one loop, frames
 A, B = 27, 71                                   # upright -> bow -> upright
 SEQ = [round(A + (B - A) * k / N) for k in range(N)]
 start = SEQ.index(min(SEQ, key=lambda f: abs(f - 50)))   # deepest bow
@@ -34,6 +34,6 @@ def save(frs, path, durs, loop):
 f180 = [o.convert('RGBa').resize((180, 180), Image.LANCZOS).convert('RGBA') for o in out]
 for i, f in enumerate(f180): f.save(f"{OUT}/frames/{i+1:02d}.png")
 print('frames', SEQ)
-save(f180, f"{OUT}/thank-you.png", durs, 2)                  # 2 s x 2 = 4 s
+save(f180, f"{OUT}/thank-you.png", durs, 4)                  # 1 s x 4 = 4 s
 save([o.convert('RGBa').resize((360, 360), Image.LANCZOS).convert('RGBA') for o in out],
      f"{OUT}/preview-thank-you.png", durs, 0)
