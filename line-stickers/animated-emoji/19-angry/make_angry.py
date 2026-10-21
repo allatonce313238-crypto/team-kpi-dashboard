@@ -1,75 +1,55 @@
-"""Angry emoji: stomp from the start of the Kling clip, then the rage part, then back
-(so the foot lifts and stomps again each loop), plus pixel-art steam, a pulsing
-anger mark, a jolt on the stomp and a small tremble."""
+"""Angry emoji: the stomp and the rage part of the Kling clip, played forward and back
+at an even speed, plus pixel-art steam puffs."""
 import sys, os
 import numpy as np
 from PIL import Image, ImageDraw
-CUT, OUT = sys.argv[1], sys.argv[2]            # folder of green-removed frames in play order, output folder
-N, W = len(os.listdir(CUT)), 540                # frames, working canvas (3x of 180)
-IMPACT = 6                                      # frame where the foot lands
-# per-frame timing: hold the start pose and the stomp, quick foot swing, scaled to a 2 s loop
-RAW = [140, 70, 70, 55, 45, 45, 160] + [95]*7 + [80]*4 + [70]*2
-INK, RED, STEAM = (42, 26, 58, 255), (240, 36, 56, 255), (250, 246, 240, 255)
-frames = [Image.open(f"{CUT}/{k:02d}.png") for k in range(N)]
-box = (0, 30, 960, 948)                         # union bbox of the frames used
+SRC, OUT = sys.argv[1], sys.argv[2]            # folder of green-removed video frames (NNN.png), output folder
+W, LOOP_MS = 540, 1000                          # working canvas (3x of 180), one loop
+INK, STEAM = (42, 26, 58, 255), (250, 246, 240, 255)
+# video frames 8..29 (foot up -> stomp -> shouting), dense around the stomp, then back again
+FWD = [8, 9, 10, 11, 12, 14, 17, 20, 23, 26, 29]
+SEQ = FWD + FWD[-2:0:-1]                        # 20 frames, ping-pong
+SEQ = SEQ[4:] + SEQ[:4]                         # start on the stomp landing (the still LINE shows)
+# show each frame for as long as the video takes to reach the next one, so the speed is even
+gaps = [abs(SEQ[(k+1) % len(SEQ)] - SEQ[k]) for k in range(len(SEQ))]
+durs = [round(g * LOOP_MS / sum(gaps)) for g in gaps]
+durs[-1] += LOOP_MS - sum(durs)
+box = (0, 30, 960, 946)                         # union bbox of the frames used
 s = 0.5
 cw, ch = round((box[2]-box[0])*s), round((box[3]-box[1])*s)
-cx, cy = (W-cw)//2, W-6-ch                      # room above the head for the effects
+cx, cy = (W-cw)//2, W-6-ch                      # room above the head for the steam
 
 def head(f):
     """Centre of the silver helmet plate, in 180px grid coordinates."""
-    a = np.asarray(f).astype(int); r, g, b, al = a[..., 0], a[..., 1], a[..., 2], a[..., 3]
+    a = np.asarray(f).astype(int); al = a[..., 3]
     mx, mn = a[..., :3].max(2), a[..., :3].min(2)
     plate = (al > 200) & (mn > 130) & (mx < 235) & (mx - mn < 22)
     plate[450:] = False; plate[:, :200] = False; plate[:, 800:] = False
     ys, xs = np.nonzero(plate)
     return (cx + (xs.mean()-box[0])*s) / 3, (cy + (ys.mean()-box[1])*s) / 3
 
-VEIN = [".##...##.",
-        "#..#.#..#",
-        "#.......#",
-        ".#.....#.",
-        ".........",
-        ".#.....#.",
-        "#.......#",
-        "#..#.#..#",
-        ".##...##."]
-
-def anger_mark(g, x, y, big):
-    """Pulsing 'anger vein' symbol; the big phase pushes each corner 1px outward."""
-    for pass_, col in ((1, INK), (0, RED)):
-        for r, row in enumerate(VEIN):
-            for c, ch_ in enumerate(row):
-                if ch_ != '#': continue
-                ox = (1 if c > 4 else -1) if big else 0
-                oy = (1 if r > 4 else -1) if big else 0
-                px, py = x + (c-4)*3 + ox, y + (r-4)*3 + oy
-                g.rectangle([px-pass_, py-pass_, px+2+pass_, py+2+pass_], fill=col)
-
-def steam(g, x, y, age):
-    """A puff that rises and grows, drawn with an ink outline."""
-    r = 3 + age
-    y -= age * 2
+def steam(g, x, y, p):
+    """A puff that rises and grows over its life p in [0, 1), drawn with an ink outline."""
+    r = round(3 + 4*p)
+    y -= round(10*p)
     for rad, fill in ((r+1, INK), (r, STEAM)):
         for ox, oy, k in ((0, 0, 0), (-r, 2, 1), (r, 2, 1)):
             rr = rad - k
             g.ellipse([x+ox-rr, y+oy-rr, x+ox+rr, y+oy+rr], fill=fill)
 
-out = []
-for k, f in enumerate(frames):
-    j = 3 if k % 2 else 0                       # 1px tremble on the 180 grid
-    jy = {IMPACT: 6, IMPACT+1: -3}.get(k, 0)    # jolt when the foot lands
-    if k == IMPACT: j = -6
+src = {i: Image.open(f"{SRC}/{i:03d}.png") for i in set(SEQ)}
+heads = {i: head(f) for i, f in src.items()}
+out, t = [], 0
+for k, i in enumerate(SEQ):
     c = Image.new('RGBA', (W, W), (0, 0, 0, 0))
-    m = f.crop(box).convert('RGBa').resize((cw, ch), Image.LANCZOS).convert('RGBA')
-    c.alpha_composite(m, (cx + j, cy + jy))
-    hx, hy = head(f); hx = round(hx + j/3); hy = round(hy + jy/3)
+    m = src[i].crop(box).convert('RGBa').resize((cw, ch), Image.LANCZOS).convert('RGBA')
+    c.alpha_composite(m, (cx, cy))
+    hx, hy = map(round, heads[i])
     lo = Image.new('RGBA', (W//3, W//3), (0, 0, 0, 0)); g = ImageDraw.Draw(lo)
-    for start, dx, dy in ((0, -30, -10), (2, -12, -18)):     # two puffs, 2 frames apart
-        age = (k - start) % 5
-        steam(g, hx+dx, hy+dy, age)
-    anger_mark(g, hx+28, hy-12, big=(k // 2) % 2 == 0)
+    for phase, dx, dy in ((0.0, -30, -10), (0.5, -12, -18)):  # two puffs, half a cycle apart
+        steam(g, hx+dx, hy+dy, (t / 500 + phase) % 1)            # by time: 2 puffs per loop each
     c.alpha_composite(lo.resize((W, W), Image.NEAREST)); out.append(c)
+    t += durs[k]
 
 def save(frs, path, durs, loop):
     sz = frs[0].width
@@ -80,10 +60,9 @@ def save(frs, path, durs, loop):
     q[0].save(path, save_all=True, append_images=q[1:], duration=durs, loop=loop, disposal=0, blend=0, optimize=True)
     print(os.path.basename(path), len(frs), 'frames', sum(durs), 'ms x', loop, os.path.getsize(path)//1024, 'KB')
 
-durs = [round(d * 2000 / sum(RAW)) for d in RAW]
-durs[-1] += 2000 - sum(durs)                    # exactly 2 s per loop
 f180 = [o.convert('RGBa').resize((180, 180), Image.LANCZOS).convert('RGBA') for o in out]
 for i, f in enumerate(f180): f.save(f"{OUT}/frames/{i+1:02d}.png")
-save(f180, f"{OUT}/angry.png", durs, 2)
+print('frames', SEQ); print('ms', durs)
+save(f180, f"{OUT}/angry.png", durs, 4)
 save([o.convert('RGBa').resize((360, 360), Image.LANCZOS).convert('RGBA') for o in out],
      f"{OUT}/preview-angry.png", durs, 0)
