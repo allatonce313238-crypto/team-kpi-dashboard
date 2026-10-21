@@ -1,5 +1,5 @@
 """Happy dance emoji: the disco move from the end of the Kling clip (paw pointing down across
-the body -> up to the sky, video frames 50-73), played forward and back so it loops with no
+the body -> up to the sky, video frames 50-68), played forward and back so it loops with no
 jump. The middle of the clip, where he just stands, is not used."""
 import sys, os
 from PIL import Image
@@ -7,8 +7,9 @@ SRC, OUT = sys.argv[1], sys.argv[2]            # folder of green-removed video f
 W, LOOP_MS = 540, 1000                          # working canvas (3x of 180), one loop
 # Start with the paw pointing up (the still LINE shows), bring it down, then back up.
 # 20 frames is LINE's maximum.
-DOWN = [73, 70, 68, 66, 64, 62, 60, 58, 56, 53]
-UP = [50, 52, 55, 57, 59, 61, 63, 65, 67, 71]
+# Frames 69-73 are left out: his body turns and his legs shift there, which looked like a glitch.
+DOWN = [68, 66, 64, 62, 60, 58, 56, 54, 52]
+UP = [50, 51, 53, 55, 57, 59, 61, 63, 65, 67]
 SEQ = DOWN + UP
 durs = [LOOP_MS // len(SEQ)] * len(SEQ)
 src = {i: Image.open(f"{SRC}/{i:03d}.png") for i in set(SEQ)}
