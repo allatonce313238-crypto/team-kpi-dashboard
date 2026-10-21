@@ -12,6 +12,7 @@ DOWN = [68, 66, 64, 62, 60, 58, 56, 54, 52]
 UP = [50, 51, 53, 55, 57, 59, 61, 63, 65, 67]
 SEQ = DOWN + UP
 durs = [LOOP_MS // len(SEQ)] * len(SEQ)
+durs[0] += LOOP_MS - sum(durs)                  # exactly 1 s per loop
 src = {i: Image.open(f"{SRC}/{i:03d}.png") for i in set(SEQ)}
 bbs = [f.getbbox() for f in src.values()]
 box = (min(b[0] for b in bbs), min(b[1] for b in bbs), max(b[2] for b in bbs), max(b[3] for b in bbs))
