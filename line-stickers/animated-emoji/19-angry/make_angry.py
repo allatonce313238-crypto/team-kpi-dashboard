@@ -1,5 +1,5 @@
 """Angry emoji from the first second of the Kling clip, played straight at real speed:
-foot raised and shouting, the stomp, then shouting. Plus pixel-art steam and a dust
+foot raised and shouting, the stomp, then shouting. Plus a pixel-art dust
 burst when the foot lands."""
 import sys, os
 import numpy as np
@@ -61,8 +61,6 @@ for k, i in enumerate(SEQ):
     c.alpha_composite(m, (cx, cy))
     hx, hy = map(round, heads[i])
     lo = Image.new('RGBA', (W//3, W//3), (0, 0, 0, 0)); g = ImageDraw.Draw(lo)
-    for phase, dx, dy in ((0.0, -30, -10), (0.5, -12, -18)):  # two puffs, half a cycle apart
-        steam(g, hx+dx, hy+dy, (t / 500 + phase) % 1)            # by time: 2 puffs per loop each
     t_land = sum(durs[:LAND])
     if 0 <= t - t_land < 420: dust(g, (t - t_land) / 420)          # the burst lasts 0.42 s after landing
     c.alpha_composite(lo.resize((W, W), Image.NEAREST)); out.append(c)
