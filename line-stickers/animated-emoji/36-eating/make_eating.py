@@ -4,7 +4,7 @@ the next one, so fast moves stay smooth and the slow chewing still gets its time
 import sys, os
 from PIL import Image
 SRC, OUT = sys.argv[1], sys.argv[2]            # folder of green-removed video frames (NNN.png), output folder
-W, LOOP_MS, END = 540, 2000, 73                 # working canvas (3x of 180), one loop (1.5x speed), last video frame
+W, LOOP_MS, END = 540, 1000, 73                 # working canvas (3x of 180), one loop (3x speed), last video frame
 SEQ = [1, 5, 8, 10, 13, 17, 19, 21, 24, 27, 29, 32, 36, 45, 50, 55, 59, 64, 68, 71]
 gaps = [(SEQ[k+1] if k+1 < len(SEQ) else END) - SEQ[k] for k in range(len(SEQ))]
 durs = [round(g * LOOP_MS / sum(gaps)) for g in gaps]
@@ -34,6 +34,6 @@ def save(frs, path, durs, loop):
 f180 = [o.convert('RGBa').resize((180, 180), Image.LANCZOS).convert('RGBA') for o in out]
 for i, f in enumerate(f180): f.save(f"{OUT}/frames/{i+1:02d}.png")
 print('ms', durs)
-save(f180, f"{OUT}/eating.png", durs, 2)                     # 2 s x 2 = 4 s
+save(f180, f"{OUT}/eating.png", durs, 4)                     # 1 s x 4 = 4 s
 save([o.convert('RGBa').resize((360, 360), Image.LANCZOS).convert('RGBA') for o in out],
      f"{OUT}/preview-eating.png", durs, 0)
