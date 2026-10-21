@@ -1,23 +1,17 @@
-"""Angry emoji built around the stomp: the foot lifts and holds, slams down fast, the
-landing holds with a dust burst, then a short shouting part. Plus pixel-art steam."""
+"""Angry emoji from the first second of the Kling clip, played straight at real speed:
+foot raised and shouting, the stomp, then shouting. Plus pixel-art steam and a dust
+burst when the foot lands."""
 import sys, os
 import numpy as np
 from PIL import Image, ImageDraw
 SRC, OUT = sys.argv[1], sys.argv[2]            # folder of green-removed video frames (NNN.png), output folder
-W, LOOP_MS = 540, 2000                          # working canvas (3x of 180), one loop
+W, LOOP_MS = 540, 1000                          # working canvas (3x of 180), one loop
 INK, STEAM = (42, 26, 58, 255), (250, 246, 240, 255)
-# (video frame, ms). Video frames 8..26: foot up (8) -> landing (12) -> shouting (14..26).
-SHOT = ([(12, 90)] * 3                                       # landing, held for 3 frames while the dust bursts
-        + [(f, 95) for f in (14, 17, 20, 23, 26, 23, 20, 17, 14)]   # shouting and punching
-        + [(f, 75) for f in (11, 10, 9)]                     # foot lifts (wind-up)
-        + [(8, 300)]                                         # foot held high
-        + [(f, 30) for f in (9, 10, 11)])                    # slam down
-SEQ = [f for f, _ in SHOT]
-durs = [d for _, d in SHOT]
-slow = [k for k, d in enumerate(durs) if d > 30]             # stretch everything but the slam to fit the loop
-extra = LOOP_MS - sum(durs)
-for k in slow: durs[k] += extra * durs[k] // sum(durs[j] for j in slow)
-durs[0] += LOOP_MS - sum(durs)
+# Video frames 1-24 (the first second), minus 4-7 where the face calms down: 20 frames,
+# LINE's maximum, 50 ms each.
+SEQ = [1, 2, 3] + list(range(8, 25))
+durs = [LOOP_MS // len(SEQ)] * len(SEQ)
+LAND = SEQ.index(12)                            # the foot touches down
 FOOT = (55, 166)                                # landing foot on the 180 grid (from frame 12)
 box = (0, 30, 960, 946)                         # union bbox of the frames used
 s = 0.5
@@ -68,8 +62,9 @@ for k, i in enumerate(SEQ):
     hx, hy = map(round, heads[i])
     lo = Image.new('RGBA', (W//3, W//3), (0, 0, 0, 0)); g = ImageDraw.Draw(lo)
     for phase, dx, dy in ((0.0, -30, -10), (0.5, -12, -18)):  # two puffs, half a cycle apart
-        steam(g, hx+dx, hy+dy, (t / 500 + phase) % 1)            # by time: 4 puffs per loop each
-    if t < 420: dust(g, t / 420)                                  # the burst lasts 0.42 s after landing
+        steam(g, hx+dx, hy+dy, (t / 500 + phase) % 1)            # by time: 2 puffs per loop each
+    t_land = sum(durs[:LAND])
+    if 0 <= t - t_land < 420: dust(g, (t - t_land) / 420)          # the burst lasts 0.42 s after landing
     c.alpha_composite(lo.resize((W, W), Image.NEAREST)); out.append(c)
     t += durs[k]
 
@@ -85,6 +80,6 @@ def save(frs, path, durs, loop):
 f180 = [o.convert('RGBa').resize((180, 180), Image.LANCZOS).convert('RGBA') for o in out]
 for i, f in enumerate(f180): f.save(f"{OUT}/frames/{i+1:02d}.png")
 print('frames', SEQ); print('ms', durs)
-save(f180, f"{OUT}/angry.png", durs, 2)       # 2 s x 2 = 4 s
+save(f180, f"{OUT}/angry.png", durs, 4)       # 1 s x 4 = 4 s
 save([o.convert('RGBa').resize((360, 360), Image.LANCZOS).convert('RGBA') for o in out],
      f"{OUT}/preview-angry.png", durs, 0)
