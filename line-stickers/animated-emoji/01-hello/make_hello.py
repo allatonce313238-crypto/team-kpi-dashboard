@@ -21,7 +21,7 @@ al[np.isin(lab,1+np.flatnonzero(sz<200))]=0       # drop stray specks
 rgb=rgb.astype(np.int16); g=rgb[...,1]; mx=np.maximum(rgb[...,0],rgb[...,2])
 rgb[...,1]=np.where(g>mx+30,mx,g)                   # no green specks
 body=np.dstack([rgb.astype(np.uint8),al])
-Image.fromarray(body,'RGBA').save(f"{S}/max/body.png"); Image.fromarray(arm,'RGBA').save(f"{S}/max/arm.png")
+Image.fromarray(body,'RGBA').save(f"{S}/body.png"); Image.fromarray(arm,'RGBA').save(f"{S}/arm.png")
 PIV=(115,292)
 def frame(t,amp=14,bob=2):
     k=(1-math.cos(2*math.pi*t))/2              # eased 0 -> 1 -> 0
@@ -32,3 +32,19 @@ def frame(t,amp=14,bob=2):
     c.alpha_composite(Image.fromarray(body,'RGBA'),(0,round(by)))
     c.alpha_composite(armI,(0,round(by)))
     return c,ang
+
+def alive(t,amp=14,lean=0.035,lag=0.1,bounce=0.02):
+    """Whole-body motion on top of the arm wave: the body leans with the wave a bit
+    later than the arm (follow-through) and squashes/stretches slightly. The lean is a
+    shear anchored at the bottom row, so the flat cut at the bottom stays level."""
+    c,ang=frame(t,amp=amp,bob=0)
+    k=(1-math.cos(2*math.pi*(t-lag)))/2          # same easing as the arm, delayed
+    sh=lean*(k-0.5)*2                             # lean left .. right
+    sy=1+bounce*math.cos(4*math.pi*t)             # two small bounces per wave
+    sx=1/math.sqrt(sy)                            # keep the volume
+    bb=c.getbbox(); yb=bb[3]; xc=(bb[0]+bb[2])/2
+    # inverse affine: source = A * dest
+    a=1/sx; b=sh/sy; c0=xc-a*xc-b*yb
+    d=0; e=1/sy; f0=yb-e*yb
+    out=c.transform(c.size,Image.AFFINE,(a,b,c0,d,e,f0),resample=Image.BICUBIC)
+    return out,ang
