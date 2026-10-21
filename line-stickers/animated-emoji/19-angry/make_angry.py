@@ -1,14 +1,18 @@
-"""Angry emoji: Kling rage clip played forward and back, plus pixel-art steam,
-a pulsing anger mark and a small tremble."""
+"""Angry emoji: stomp from the start of the Kling clip, then the rage part, then back
+(so the foot lifts and stomps again each loop), plus pixel-art steam, a pulsing
+anger mark, a jolt on the stomp and a small tremble."""
 import sys, os
 import numpy as np
 from PIL import Image, ImageDraw
-CUT, OUT = sys.argv[1], sys.argv[2]            # folder of 18 green-removed frames (ping-pong order), output folder
-N, W = 18, 540                                  # frames, working canvas (3x of 180)
+CUT, OUT = sys.argv[1], sys.argv[2]            # folder of green-removed frames in play order, output folder
+N, W = len(os.listdir(CUT)), 540                # frames, working canvas (3x of 180)
+IMPACT = 6                                      # frame where the foot lands
+# per-frame timing: hold the start pose and the stomp, quick foot swing, scaled to a 2 s loop
+RAW = [140, 70, 70, 55, 45, 45, 160] + [95]*7 + [80]*4 + [70]*2
 INK, RED, STEAM = (42, 26, 58, 255), (240, 36, 56, 255), (250, 246, 240, 255)
 frames = [Image.open(f"{CUT}/{k:02d}.png") for k in range(N)]
-box = (0, 80, 960, 948)                         # union bbox of the clip
-s = 0.52
+box = (0, 30, 960, 948)                         # union bbox of the frames used
+s = 0.5
 cw, ch = round((box[2]-box[0])*s), round((box[3]-box[1])*s)
 cx, cy = (W-cw)//2, W-6-ch                      # room above the head for the effects
 
@@ -54,15 +58,17 @@ def steam(g, x, y, age):
 out = []
 for k, f in enumerate(frames):
     j = 3 if k % 2 else 0                       # 1px tremble on the 180 grid
+    jy = {IMPACT: 6, IMPACT+1: -3}.get(k, 0)    # jolt when the foot lands
+    if k == IMPACT: j = -6
     c = Image.new('RGBA', (W, W), (0, 0, 0, 0))
     m = f.crop(box).convert('RGBa').resize((cw, ch), Image.LANCZOS).convert('RGBA')
-    c.alpha_composite(m, (cx + j, cy))
-    hx, hy = head(f); hx = round(hx + j/3); hy = round(hy)
+    c.alpha_composite(m, (cx + j, cy + jy))
+    hx, hy = head(f); hx = round(hx + j/3); hy = round(hy + jy/3)
     lo = Image.new('RGBA', (W//3, W//3), (0, 0, 0, 0)); g = ImageDraw.Draw(lo)
-    for start, dx, dy in ((0, -30, -10), (3, -12, -18)):     # two puffs, 3 frames apart
-        age = (k - start) % 6
-        if age < 5: steam(g, hx+dx, hy+dy, age)
-    anger_mark(g, hx+28, hy-12, big=(k // 3) % 2 == 0)
+    for start, dx, dy in ((0, -30, -10), (2, -12, -18)):     # two puffs, 2 frames apart
+        age = (k - start) % 5
+        steam(g, hx+dx, hy+dy, age)
+    anger_mark(g, hx+28, hy-12, big=(k // 2) % 2 == 0)
     c.alpha_composite(lo.resize((W, W), Image.NEAREST)); out.append(c)
 
 def save(frs, path, durs, loop):
@@ -74,9 +80,10 @@ def save(frs, path, durs, loop):
     q[0].save(path, save_all=True, append_images=q[1:], duration=durs, loop=loop, disposal=0, blend=0, optimize=True)
     print(os.path.basename(path), len(frs), 'frames', sum(durs), 'ms x', loop, os.path.getsize(path)//1024, 'KB')
 
-durs = [56]*10 + [55]*8                         # about 2x the clip's speed, 1 s per loop
+durs = [round(d * 2000 / sum(RAW)) for d in RAW]
+durs[-1] += 2000 - sum(durs)                    # exactly 2 s per loop
 f180 = [o.convert('RGBa').resize((180, 180), Image.LANCZOS).convert('RGBA') for o in out]
 for i, f in enumerate(f180): f.save(f"{OUT}/frames/{i+1:02d}.png")
-save(f180, f"{OUT}/angry.png", durs, 4)
+save(f180, f"{OUT}/angry.png", durs, 2)
 save([o.convert('RGBa').resize((360, 360), Image.LANCZOS).convert('RGBA') for o in out],
      f"{OUT}/preview-angry.png", durs, 0)
