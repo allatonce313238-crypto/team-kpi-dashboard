@@ -1,4 +1,4 @@
-Keyframe: "Magic lesson" - the Earth doll teaches Max magic (Max = student). Slot not chosen yet.
+Keyframe: "Magic lesson" - the Earth doll teaches Max magic (Max = student). Slot: #39 (replaces Yawn).
 Kling idea: Kling 3.0, start = end, 720p, 3 s, no audio - the Earth doll taps its staff on the book like a teacher,
 Max waves his little wand carefully, a small puff of sparkles pops out, and Max's face lights up proudly.
 
