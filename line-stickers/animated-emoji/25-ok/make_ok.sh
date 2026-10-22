@@ -1,2 +1,3 @@
-# OK - bounces holding up the red O sign (whole clip; Kling 3.0 start = end, so 73 matches 1). 2 s x 2.
-python3 ../../tools/make_apng.py "$1" . ok --seq 1,5,8,12,15,19,23,26,30,33,37,41,44,48,51,55,59,62,66,69 --durs 100 --loops 2
+# OK: Kling bounced fast, so sampling the whole clip looked jumpy. Uses 18 consecutive frames (30-47; 48 matches 30)
+# for one smooth bounce, 1 s x 4.
+python3 ../../tools/make_apng.py "$1" . ok --seq 30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47 --durs 65,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55 --loops 4
