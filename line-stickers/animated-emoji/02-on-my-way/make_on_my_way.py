@@ -6,8 +6,8 @@ CUT, OUT = sys.argv[1], sys.argv[2]            # folder of 16 green-removed fram
 N, W = 16, 540                                  # frames, working canvas (3x of 180)
 INK, LINE, DUST = (42, 26, 58, 255), (255, 255, 255, 255), (244, 234, 216, 255)
 frames = [Image.open(f"{CUT}/{k:02d}.png") for k in range(N)]
-box = (38, 70, 936, 948)                        # union bbox of the run frames
-s = 0.5
+box = (20, 74, 912, 960)                        # union bbox of the run frames (Kling 3.0 redo, video frames 7-31)
+s = 449 / max(box[2] - box[0], box[3] - box[1])
 cw, ch = round((box[2]-box[0])*s), round((box[3]-box[1])*s)
 cx, cy = W-8-cw, W-14-ch                        # right-aligned, room on the left for effects
 
