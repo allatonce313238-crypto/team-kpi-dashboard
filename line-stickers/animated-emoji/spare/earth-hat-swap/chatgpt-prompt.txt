@@ -1,0 +1,17 @@
+Spare keyframe (not in the 40 yet): "Hat swap" with the Earth doll.
+Kling idea: Kling 3.0, start = end, 720p, 3 s, no audio - Max lifts the hat brim to peek out, giggles, and the
+too-big hat flops back down over his eyes; the Earth doll wiggles happily in his paw.
+
+ChatGPT prompt:
+From my GitHub repo allatonce313238-crypto/team-kpi-dashboard, branch claude/line-stickers-bg-dicut-302vim, use these images as exact references:
+Image 1: line-stickers/animated-emoji/01-hello/kling-start.png — Max: orange-and-cream chibi cat knight, gold helmet with blue-white band and small white wings, gold-blue armor, blue cape, pixel-art style.
+Image 2: line-stickers/animated-emoji/16-hug/kling-start.png — the DOLL STYLE to copy: look at the small black cat doll Max is hugging. Make the new doll in exactly this style — a small, round, soft blob-shaped plush with stubby little paws, flat colors, very few details, simple round dot eyes and no mouth.
+Image 3: line-stickers/full-res/04.png — Earth, a black cat magician. Use him ONLY for the doll's colors and key features and for the wizard hat. Ignore the text and effects.
+
+The doll: a small Earth plush doll in exactly the same style as the doll in image 2, about the size of Max's head. Round black blob body, two simple amber dot eyes, no mouth, small black cat ears, a tiny short blue cape. The doll is NOT wearing its hat.
+
+Camera: chest-up close-up, front view.
+Pose: "Hat swap" — Max is wearing the Earth doll's big floppy yellow wizard hat (with a blue band and one small gold star) on top of his helmet. The hat is far too big for him and has slid down over his eyes, its tip flopping to one side; his helmet wings poke out from under the brim. The little hatless Earth doll sits in Max's open paw in front of his chest, looking up at him with its dot eyes. Max's other paw holds the brim of the hat, trying to lift it.
+Expression (Max): giggling happily — his eyes are hidden under the hat brim, a big open happy smile, rosy pink cheeks.
+
+Max, the hat and the doll fully inside the image with a little space on all sides. Solid flat pure green background (#00FF00), no shadows, no sparkles, no text, no extra objects. Square 1:1.
