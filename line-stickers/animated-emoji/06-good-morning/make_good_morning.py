@@ -1,17 +1,15 @@
-"""Good morning emoji: stretch on tiptoes with paws on top of the head, wings opening, then relax and stretch again.
-Uses only video frames 1-22: after that Kling stretches the arms into long hoops, which looked wrong.
-Ping-pong loop (22 -> 1 -> 22), starts on the stretch. 2 s loop x 2."""
+"""Good morning emoji: paws together on top of the head, wings open, gentle happy sway.
+Uses only video frames 8-13: elsewhere Kling's arms come forward over the face or stretch into long hoops.
+Ping-pong loop (8 -> 13 -> 8). 1 s loop x 4."""
 import sys, os
 from PIL import Image
 SRC, OUT = sys.argv[1], sys.argv[2]            # folder of green-removed video frames (NNN.png), output folder
-W, LOOP_MS = 540, 2000                          # working canvas (3x of 180), one loop
-TOP, BOTTOM = 22, 1                             # stretched (wings open) / relaxed lean
-DOWN = [22, 20, 18, 16, 14, 12, 10, 8, 5, 3]
-UP = [1, 3, 5, 8, 10, 12, 14, 16, 18, 20]
-SEQ = DOWN + UP
-durs = [72] * len(SEQ)
-durs[SEQ.index(BOTTOM)] = 300
-durs[0] += LOOP_MS - sum(durs)                  # hold the stretch
+W, LOOP_MS = 540, 1000                          # working canvas (3x of 180), one loop
+A, B = 8, 13                                    # sway ends
+SEQ = list(range(A, B + 1)) + list(range(B - 1, A, -1))
+durs = [80] * len(SEQ)
+durs[SEQ.index(B)] = 160
+durs[0] += LOOP_MS - sum(durs)                  # hold at the start
 
 src = {i: Image.open(f"{SRC}/{i:03d}.png") for i in set(SEQ)}
 bbs = [src[i].getbbox() for i in src]
@@ -39,6 +37,6 @@ os.makedirs(f"{OUT}/frames", exist_ok=True)
 f180 = [o.convert('RGBa').resize((180, 180), Image.LANCZOS).convert('RGBA') for o in out]
 for i, f in enumerate(f180): f.save(f"{OUT}/frames/{i+1:02d}.png")
 print('frames', SEQ, durs)
-save(f180, f"{OUT}/good-morning.png", durs, 2)                # 2 s x 2 = 4 s
+save(f180, f"{OUT}/good-morning.png", durs, 4)                # 1 s x 4 = 4 s
 save([o.convert('RGBa').resize((360, 360), Image.LANCZOS).convert('RGBA') for o in out],
      f"{OUT}/preview-good-morning.png", durs, 0)
