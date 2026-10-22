@@ -1,6 +1,7 @@
 """Congrats emoji: curled up hugging his chest (held still), then BURSTS open cheering with confetti.
 Kling 3.0 start/end frames. The curl (1-33) has jittery feet and the burst (35-36) is a blurry smear,
-so the curl is one held frame and the burst cuts straight to the open pose. 2 s loop x 2.
+so the curl is one held frame and the burst cuts straight to the open pose, which is then held still
+(no arm waving). 2 s loop x 2.
 Crop is set around Max (largest blob) so the confetti runs off the edges instead of shrinking him."""
 import sys, os
 import numpy as np
@@ -8,10 +9,9 @@ from PIL import Image
 from scipy import ndimage as ndi
 SRC, OUT = sys.argv[1], sys.argv[2]            # folder of green-removed video frames (NNN.png), output folder
 W, LOOP_MS = 540, 2000                          # working canvas (3x of 180), one loop
-CURL, SETTLE, BACK = 19, 71, 34                 # still curl, still end of the cheer, curl-back frame
-OPEN = [37, 38] + [round(39 + (SETTLE - 1 - 39) * k / 10) for k in range(11)]
-SEQ = [CURL] + OPEN + [SETTLE, BACK]
-durs = [420] + [60, 60] + [88] * 11 + [300, 180]
+CURL, HOLD, BACK = 19, 41, 34                   # still curl, held open pose (sharp, arms up), curl-back frame
+SEQ = [CURL, 37, 38, 39, HOLD, BACK]
+durs = [560, 60, 60, 60, 1080, 180]
 durs[0] += LOOP_MS - sum(durs)
 PAD = 8
 
