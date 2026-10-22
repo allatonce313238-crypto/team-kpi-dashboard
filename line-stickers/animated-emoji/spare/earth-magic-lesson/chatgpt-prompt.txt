@@ -1,0 +1,19 @@
+Keyframe: "Magic lesson" - the Earth doll teaches Max magic (Max = student). Slot not chosen yet.
+Kling idea: Kling 3.0, start = end, 720p, 3 s, no audio - the Earth doll taps its staff on the book like a teacher,
+Max waves his little wand carefully, a small puff of sparkles pops out, and Max's face lights up proudly.
+
+ChatGPT prompt:
+From my GitHub repo allatonce313238-crypto/team-kpi-dashboard, branch claude/line-stickers-bg-dicut-302vim, use these images as exact references:
+Image 1: line-stickers/animated-emoji/01-hello/kling-start.png — Max: orange-and-cream chibi cat knight, gold helmet with blue-white band and small white wings, gold-blue armor, blue cape, raccoon-striped tail, pixel-art style.
+Image 2: line-stickers/animated-emoji/03-thank-you/kling-start.png — Max's full body, legs and feet.
+Image 3: line-stickers/animated-emoji/16-hug/kling-start.png — the DOLL STYLE to copy: look at the small black cat doll Max is hugging. Make the new doll in exactly this style — a small, round, soft blob-shaped plush with stubby little paws, flat colors, very few details, simple round dot eyes and no mouth.
+Image 4: line-stickers/full-res/04.png — Earth, a black cat magician. Use him ONLY for the doll's colors and key features. Ignore the text and effects.
+
+The doll: a small Earth plush doll in exactly the same style as the doll in image 3, about the size of Max's head. Round black blob body, two simple amber dot eyes, no mouth, small black cat ears, a tiny short blue cape, and a big floppy yellow wizard hat with a blue band and one small gold star. It holds a tiny wooden staff with a glowing light-blue orb.
+
+Camera: three-quarter view, full body.
+Scene: "Magic lesson" — a big open spellbook with a brown leather cover and a purple ribbon lies on the floor. The Earth doll stands on top of the open book like a little teacher, pointing its staff forward like a pointer, as if explaining a spell.
+Max sits cross-legged in front of the book like an eager student, his shield resting beside him. He holds a small simple practice wand (a thin wooden stick with a tiny gold star on the tip) in one paw, pointing it forward, and a small puff of gold and light-blue sparkles fizzles from the tip — his first little spell. His other paw rests on his knee.
+Expression (Max): focused and excited — big bright eyes looking at the tip of his wand, tongue poking out a little at the corner of his mouth in concentration, eyebrows set, light pink blush.
+
+Max, the doll, the book and the sparkles fully inside the image with a little space on all sides. Solid flat pure green background (#00FF00), no shadows, no floor line, no text or writing on the book pages, no extra objects. Square 1:1.
