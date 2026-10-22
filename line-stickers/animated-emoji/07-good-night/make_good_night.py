@@ -1,9 +1,9 @@
 """Good night emoji: dozing in pajamas, hugging a pillow; head nods down onto the pillow and drifts back up.
-One full sway from the Kling clip (11 -> 46, frame 46 matches 11), slow 2 s loop x 2, starts on the deepest nod. No overlays."""
+One full sway from the Kling clip (11 -> 46, frame 46 matches 11), 1 s loop x 4, starts on the deepest nod. No overlays."""
 import sys, os
 from PIL import Image
 SRC, OUT = sys.argv[1], sys.argv[2]            # folder of green-removed video frames (NNN.png), output folder
-W, LOOP_MS, N = 540, 2000, 20                   # working canvas (3x of 180), one loop, frames
+W, LOOP_MS, N = 540, 1000, 20                   # working canvas (3x of 180), one loop, frames
 A, B = 11, 46                                   # head up -> nod onto pillow -> head up
 SEQ = [round(A + (B - A) * k / N) for k in range(N)]
 start = SEQ.index(min(SEQ, key=lambda f: abs(f - 26)))   # deepest nod
@@ -35,6 +35,6 @@ f180 = [o.convert('RGBa').resize((180, 180), Image.LANCZOS).convert('RGBA') for 
 os.makedirs(f"{OUT}/frames", exist_ok=True)
 for i, f in enumerate(f180): f.save(f"{OUT}/frames/{i+1:02d}.png")
 print('frames', SEQ)
-save(f180, f"{OUT}/good-night.png", durs, 2)                 # 2 s x 2 = 4 s
+save(f180, f"{OUT}/good-night.png", durs, 4)                 # 1 s x 4 = 4 s
 save([o.convert('RGBa').resize((360, 360), Image.LANCZOS).convert('RGBA') for o in out],
      f"{OUT}/preview-good-night.png", durs, 0)
